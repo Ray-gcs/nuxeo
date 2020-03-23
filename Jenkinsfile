@@ -284,6 +284,12 @@ pipeline {
     CHANGE_BRANCH = "${env.CHANGE_BRANCH != null ? env.CHANGE_BRANCH : BRANCH_NAME}"
     CHANGE_TARGET = "${env.CHANGE_TARGET != null ? env.CHANGE_TARGET : BRANCH_NAME}"
     CONNECT_PREPROD_URL = 'https://nos-preprod-connect.nuxeocloud.com/nuxeo'
+    // Required by the jx preview command: https://github.com/jenkins-x/jx/blob/8fdc3a1182bc3ed6ae09728721b53ea4fa1d6234/pkg/cmd/preview/preview.go#L1007
+    ORG = "nuxeo"
+    // Required by the jx preview command: https://github.com/jenkins-x/jx/blob/8fdc3a1182bc3ed6ae09728721b53ea4fa1d6234/pkg/cmd/preview/preview.go#L1015
+    APP_NAME = "nuxeo"
+    PREVIEW_NAMESPACE = "$APP_NAME-${BRANCH_NAME.toLowerCase()}"
+    PERSISTENCE = !isPullRequest()
   }
 
   stages {
@@ -628,6 +634,65 @@ pipeline {
         }
         failure {
           setGitHubBuildStatus('platform/upload/packages', 'Upload Nuxeo Packages', 'FAILURE')
+        }
+      }
+    }
+
+    stage('Deploy Preview') {
+      when {
+        not {
+          branch 'PR-*'
+        }
+      }
+      steps {
+        setGitHubBuildStatus('nuxeo/preview', 'Deploy nuxeo preview', 'PENDING')
+        container('maven') {
+          dir('ci/helm/preview') {
+            echo """
+            ----------------------------------------
+            Deploy Preview environment
+            ----------------------------------------"""
+            // first substitute environment variables in chart values
+            sh """
+              mv values.yaml values.yaml.tosubst
+              envsubst < values.yaml.tosubst > values.yaml
+            """
+            // second create target namespace (if doesn't exist) and copy secrets to target namespace
+            script {
+              boolean nsExists = sh(returnStatus: true, script: "kubectl get namespace ${PREVIEW_NAMESPACE}") == 0
+              String noCommentOpt = '';
+              if (nsExists) {
+                noCommentOpt = '--no-comment'
+              } else {
+                sh "kubectl create namespace ${PREVIEW_NAMESPACE}"
+              }
+              // third build and deploy the chart
+              // To avoid jx gc cron job, reference branch previews are deployed by calling jx step helm install
+              // The -n name provided must be lowercase
+              sh """
+                jx step helm build
+                mkdir target && helm template . --output-dir target
+                jx step helm install --namespace ${PREVIEW_NAMESPACE} -n ${PREVIEW_NAMESPACE.toLowerCase()} .
+              """
+              // We need to expose the nuxeo url by hand
+              url = sh(returnStdout: true, script: "jx get urls -n ${PREVIEW_NAMESPACE} | grep -oP https://.* | tr -d '\\n'")
+              echo """
+                ----------------------------------------
+                Preview available at: ${url}
+                ----------------------------------------"""
+            }
+          }
+        }
+      }
+      post {
+        always {
+          archiveArtifacts allowEmptyArchive: true, artifacts: '**/requirements.lock, **/target/**/*.yaml'
+        }
+        success {
+          setGitHubBuildStatus('nuxeo/preview', 'Deploy nuxeo preview', 'SUCCESS')
+        }
+        failure {
+          setGitHubBuildStatus('nuxeo/preview', 'Deploy nuxeo preview', 'FAILURE')
         }
       }
     }
