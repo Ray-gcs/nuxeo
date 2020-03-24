@@ -26,18 +26,11 @@ package org.nuxeo.ecm.core.api;
 public interface CloseableCoreSession extends CoreSession, AutoCloseable {
 
     /**
-     * Closes this session.
+     * Does nothing.
      *
      * @since 5.9.3
      */
     @Override
     void close();
-
-    /**
-     * Destroys any system resources held by this instance.
-     * <p>
-     * Called when the instance is no more needed.
-     */
-    void destroy();
 
 }
