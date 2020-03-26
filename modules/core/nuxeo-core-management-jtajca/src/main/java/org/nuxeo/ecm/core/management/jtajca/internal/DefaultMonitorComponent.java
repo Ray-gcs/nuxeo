@@ -32,8 +32,8 @@ import javax.management.ObjectName;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nuxeo.ecm.core.api.CloseableCoreSession;
 import org.nuxeo.ecm.core.api.CoreInstance;
+import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.management.jtajca.ConnectionPoolMonitor;
 import org.nuxeo.ecm.core.management.jtajca.CoreSessionMonitor;
 import org.nuxeo.ecm.core.management.jtajca.Defaults;
@@ -129,9 +129,8 @@ public class DefaultMonitorComponent extends DefaultComponent {
      * Make sure we open the repository, to initialize its connection manager.
      */
     protected void activateRepository(String repositoryName) {
-        try (CloseableCoreSession session = CoreInstance.openCoreSessionSystem(repositoryName)) {
-            // do nothing, just open and close
-        }
+        CoreSession session = CoreInstance.getCoreSessionSystem(repositoryName);
+        session.getRootDocument();
     }
 
     protected void uninstall() {
