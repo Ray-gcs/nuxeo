@@ -279,7 +279,7 @@ pipeline {
     PUBLIC_DOCKER_REGISTRY = 'docker.packages.nuxeo.com'
     MAVEN_OPTS = "$MAVEN_OPTS -Xms512m -Xmx3072m"
     MAVEN_ARGS = getMavenArgs()
-    VERSION = getVersion()
+    VERSION = "11.x"
     DOCKER_TAG = getDockerTagFrom("${VERSION}")
     CHANGE_BRANCH = "${env.CHANGE_BRANCH != null ? env.CHANGE_BRANCH : BRANCH_NAME}"
     CHANGE_TARGET = "${env.CHANGE_TARGET != null ? env.CHANGE_TARGET : BRANCH_NAME}"
@@ -289,7 +289,7 @@ pipeline {
     // Required by the jx preview command: https://github.com/jenkins-x/jx/blob/8fdc3a1182bc3ed6ae09728721b53ea4fa1d6234/pkg/cmd/preview/preview.go#L1015
     APP_NAME = "nuxeo"
     PREVIEW_NAMESPACE = "$APP_NAME-${BRANCH_NAME.toLowerCase()}"
-    PERSISTENCE = !isPullRequest()
+    PERSISTENCE = true
   }
 
   stages {
@@ -310,6 +310,7 @@ pipeline {
     }
 
     stage('Update version') {
+      when {expression {return false}}
       steps {
         container('maven') {
           echo """
@@ -329,6 +330,7 @@ pipeline {
 
     stage('Git commit') {
       when {
+        expression {return false}
         not {
           branch 'PR-*'
         }
@@ -349,6 +351,7 @@ pipeline {
     }
 
     stage('Compile') {
+      when {expression {return false}}
       steps {
         setGitHubBuildStatus('platform/compile', 'Compile', 'PENDING')
         container('maven') {
@@ -371,6 +374,7 @@ pipeline {
     }
 
     stage('Run runtime unit tests') {
+      when {expression {return false}}
       steps {
         setGitHubBuildStatus('platform/utests/runtime/dev', 'Unit tests - runtime', 'PENDING')
         container('maven') {
@@ -397,6 +401,7 @@ pipeline {
     }
 
     stage('Run unit tests') {
+      when {expression {return false}}
       steps {
         script {
           def stages = [:]
@@ -409,6 +414,7 @@ pipeline {
     }
 
     stage('Package') {
+      when {expression {return false}}
       steps {
         setGitHubBuildStatus('platform/package', 'Package', 'PENDING')
         container('maven') {
@@ -431,6 +437,7 @@ pipeline {
     }
 
     stage('Run "dev" functional tests') {
+      when {expression {return false}}
       steps {
         setGitHubBuildStatus('platform/ftests/dev', 'Functional tests - dev environment', 'PENDING')
         container('maven') {
@@ -456,6 +463,7 @@ pipeline {
     }
 
     stage('Build Docker images') {
+      when {expression {return false}}
       steps {
         setGitHubBuildStatus('platform/docker/build', 'Build Docker images', 'PENDING')
         container('maven') {
@@ -482,6 +490,7 @@ pipeline {
     }
 
     stage('Test Docker images') {
+      when {expression {return false}}
       steps {
         setGitHubBuildStatus('platform/docker/test', 'Test Docker images', 'PENDING')
         container('maven') {
@@ -535,6 +544,7 @@ pipeline {
 
     stage('Git tag and push') {
       when {
+        expression {return false}
         not {
           branch 'PR-*'
         }
@@ -561,6 +571,7 @@ pipeline {
 
     stage('Deploy Docker images') {
       when {
+        expression {return false}
         not {
           branch 'PR-*'
         }
@@ -590,6 +601,7 @@ pipeline {
     }
 
     stage('Deploy Maven artifacts') {
+      when {expression {return false}}
       steps {
         setGitHubBuildStatus('platform/deploy', 'Deploy Maven artifacts', 'PENDING')
         container('maven') {
@@ -611,6 +623,7 @@ pipeline {
     }
 
     stage('Upload Nuxeo Packages') {
+      when {expression {return false}}
       steps {
         setGitHubBuildStatus('platform/upload/packages', 'Upload Nuxeo Packages', 'PENDING')
         container('maven') {
@@ -639,11 +652,13 @@ pipeline {
     }
 
     stage('Deploy Preview') {
+      /*
       when {
         not {
           branch 'PR-*'
         }
       }
+      */
       steps {
         setGitHubBuildStatus('nuxeo/preview', 'Deploy nuxeo preview', 'PENDING')
         container('maven') {
@@ -699,6 +714,7 @@ pipeline {
 
     stage('JSF pipeline') {
       when {
+        expression {return false}
         expression {
           // only trigger JSF pipeline if the target branch is master or a maintenance branch
           return CHANGE_TARGET ==~ 'master|\\d+\\.\\d+'
