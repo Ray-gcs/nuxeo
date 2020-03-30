@@ -357,11 +357,6 @@ pipeline {
     }
 
     stage('Compile') {
-      when {
-        expression {
-          return false
-        }
-      }
       steps {
         setGitHubBuildStatus('platform/compile', 'Compile', 'PENDING')
         container('maven') {
