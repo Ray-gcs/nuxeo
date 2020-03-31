@@ -235,7 +235,13 @@ def buildUnitTestStage(env) {
             throw err
           } finally {
             try {
+              archiveArtifacts allowEmptyArchive: true, artifacts: """
+                modules/core/nuxeo-core-storage-sql/nuxeo-core-storage-sql-test/target-${env}*.log,
+                modules/platform/nuxeo-automation/nuxeo-automation-features/target-${env}*.log
+              """
               junit testResults: "**/target-${env}/surefire-reports/*.xml"
+            } catch (finallyErr) {
+              echo hudson.Functions.printThrowable(finallyErr)
             } finally {
               echo "${env} unit tests: clean up test namespace"
               // uninstall the nuxeo Helm chart
