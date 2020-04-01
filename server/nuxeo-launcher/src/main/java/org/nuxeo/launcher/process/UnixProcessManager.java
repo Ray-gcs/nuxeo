@@ -61,8 +61,8 @@ public class UnixProcessManager implements ProcessManager {
     }
 
     @Override
-    public void kill(Process process, String pid) throws IOException {
-        execute("/bin/kill", "-KILL", pid);
+    public void kill(ProcessHandle processHandle) throws IOException {
+        execute("/bin/kill", "-KILL", String.valueOf(processHandle.pid()));
     }
 
     protected List<String> execute(String... command) throws IOException {

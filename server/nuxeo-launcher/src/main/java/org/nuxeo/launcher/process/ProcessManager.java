@@ -23,7 +23,7 @@ import java.io.IOException;
 
 public interface ProcessManager {
 
-    void kill(Process process, String pid) throws IOException;
+    void kill(ProcessHandle processHandle) throws IOException;
 
     String findPid(String regex) throws IOException;
 

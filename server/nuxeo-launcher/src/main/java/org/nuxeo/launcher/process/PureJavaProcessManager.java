@@ -29,8 +29,8 @@ public class PureJavaProcessManager implements ProcessManager {
     }
 
     @Override
-    public void kill(Process process, String pid) {
-        process.destroy();
+    public void kill(ProcessHandle processHandle) {
+        processHandle.destroy();
     }
 
     @Override

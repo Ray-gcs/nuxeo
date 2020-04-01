@@ -39,8 +39,8 @@ public class WindowsProcessManager implements ProcessManager {
     }
 
     @Override
-    public void kill(Process process, String pid) throws IOException {
-        execute("taskkill", "/t", "/f", "/pid", pid);
+    public void kill(ProcessHandle processHandle) throws IOException {
+        execute("taskkill", "/t", "/f", "/pid", String.valueOf(processHandle.pid()));
     }
 
     public boolean isUsable() {
