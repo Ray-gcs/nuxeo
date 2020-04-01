@@ -19,9 +19,7 @@ package org.nuxeo.functionaltests;
 import static org.nuxeo.functionaltests.Constants.ADMINISTRATOR;
 
 import org.junit.Test;
-import org.nuxeo.functionaltests.JavaScriptErrorCollector.JavaScriptErrorIgnoreRule;
 import org.nuxeo.functionaltests.pages.DocumentBasePage.UserNotConnectedException;
-import org.nuxeo.functionaltests.pages.LoginPage;
 
 /**
  * Simple login, logout test.
