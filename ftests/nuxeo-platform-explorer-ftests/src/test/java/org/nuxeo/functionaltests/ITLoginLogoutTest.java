@@ -16,6 +16,8 @@
  */
 package org.nuxeo.functionaltests;
 
+import static org.nuxeo.functionaltests.Constants.ADMINISTRATOR;
+
 import org.junit.Test;
 import org.nuxeo.functionaltests.JavaScriptErrorCollector.JavaScriptErrorIgnoreRule;
 import org.nuxeo.functionaltests.pages.DocumentBasePage.UserNotConnectedException;
@@ -28,9 +30,9 @@ public class ITLoginLogoutTest extends AbstractTest {
 
     @Test
     public void testLoginLogout() throws UserNotConnectedException {
-        login();
+        getLoginPage().login(ADMINISTRATOR, ADMINISTRATOR);
         open("/site/distribution");
-        get(NUXEO_URL + "/logout", LoginPage.class,
-                JavaScriptErrorIgnoreRule.startsWith("unreachable code after return statement"));
+        // logout avoiding JS error check
+        driver.get(NUXEO_URL + "/logout");
     }
 }
