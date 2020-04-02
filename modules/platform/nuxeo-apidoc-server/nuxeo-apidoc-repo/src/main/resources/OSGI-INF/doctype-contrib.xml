@@ -18,11 +18,9 @@
         <type>NXBundleGroup</type>
         <type>NXBundle</type>
         <type>NXOperation</type>
-        <type>NXSeamComponent</type>
         <type>Workspace</type>
       </subtypes>
     </doctype>
-
 
     <doctype name="NXBundleGroup" extends="Folder">
       <schema name="common" />
