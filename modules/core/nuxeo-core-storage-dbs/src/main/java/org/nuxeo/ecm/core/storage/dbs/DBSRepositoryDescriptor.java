@@ -70,6 +70,11 @@ public class DBSRepositoryDescriptor implements Cloneable {
         fulltextDescriptor.setFulltextDisabled(disabled);
     }
 
+    @XNode("fulltext@storedInBlob")
+    public void setFulltextStoredInBlob(boolean storedInBlob) {
+        fulltextDescriptor.setFulltextStoredInBlob(storedInBlob);
+    }
+
     @XNode("fulltext@searchDisabled")
     public void setFulltextSearchDisabled(boolean disabled) {
         fulltextDescriptor.setFulltextSearchDisabled(disabled);

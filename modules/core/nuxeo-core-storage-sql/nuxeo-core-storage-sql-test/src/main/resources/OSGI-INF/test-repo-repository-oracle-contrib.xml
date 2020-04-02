@@ -27,6 +27,7 @@
           <facet>NotPerDocFacet</facet>
         </neverPerDocumentFacets>
         <fulltext disabled="${nuxeo.test.fulltext.disabled}"
+          storedInBlob="${nuxeo.test.fulltext.storedInBlob}"
           searchDisabled="${nuxeo.test.fulltext.search.disabled}">
           <index> <!-- name="default" implied -->
             <!-- all props implied -->

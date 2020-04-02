@@ -111,10 +111,20 @@ public class FulltextDescriptor {
         fulltextDisabled = Boolean.valueOf(disabled);
     }
 
+    private Boolean fulltextStoredInBlob;
+
+    public boolean getFulltextStoredInBlob() {
+        return defaultFalse(fulltextStoredInBlob);
+    }
+
+    public void setFulltextStoredInBlob(boolean storedInBlob) {
+        fulltextStoredInBlob = Boolean.valueOf(storedInBlob);
+    }
+
     private Boolean fulltextSearchDisabled;
 
     public boolean getFulltextSearchDisabled() {
-        if (getFulltextDisabled()) {
+        if (getFulltextDisabled() || getFulltextStoredInBlob()) {
             return true;
         }
         return defaultFalse(fulltextSearchDisabled);
@@ -161,6 +171,7 @@ public class FulltextDescriptor {
     public FulltextDescriptor(FulltextDescriptor other) {
         fulltextFieldSizeLimit = other.fulltextFieldSizeLimit;
         fulltextDisabled = other.fulltextDisabled;
+        fulltextStoredInBlob = other.fulltextStoredInBlob;
         fulltextSearchDisabled = other.fulltextSearchDisabled;
         fulltextIndexes = FulltextIndexDescriptor.copyList(other.fulltextIndexes);
         fulltextExcludedTypes = new HashSet<>(other.fulltextExcludedTypes);
@@ -173,6 +184,9 @@ public class FulltextDescriptor {
         }
         if (other.fulltextDisabled != null) {
             fulltextDisabled = other.fulltextDisabled;
+        }
+        if (other.fulltextStoredInBlob != null) {
+            fulltextStoredInBlob = other.fulltextStoredInBlob;
         }
         if (other.fulltextSearchDisabled != null) {
             fulltextSearchDisabled = other.fulltextSearchDisabled;
