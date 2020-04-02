@@ -104,16 +104,6 @@
       <facet name="Versionable" />
     </doctype>
 
-    <doctype name="NXSeamComponent" extends="Document">
-      <schema name="common" />
-      <schema name="dublincore" />
-      <schema name="file" />
-      <schema name="nxseam" />
-
-      <facet name="Commentable" />
-      <facet name="Versionable" />
-    </doctype>
-
     <doctype name="NXOperation" extends="Document">
       <schema name="common" />
       <schema name="dublincore" />

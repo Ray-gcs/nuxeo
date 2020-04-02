@@ -96,12 +96,6 @@ public class AdapterFactory implements DocumentAdapterFactory {
             }
         }
 
-        if (adapterClassName.equals(SeamComponentInfo.class.getSimpleName())) {
-            if (doc.getType().equals(SeamComponentInfo.TYPE_NAME)) {
-                return new SeamComponentInfoDocAdapter(doc);
-            }
-        }
-
         if (adapterClassName.equals(OperationInfo.class.getSimpleName())) {
             if (doc.getType().equals(OperationInfo.TYPE_NAME)) {
                 return new OperationInfoDocAdapter(doc);
