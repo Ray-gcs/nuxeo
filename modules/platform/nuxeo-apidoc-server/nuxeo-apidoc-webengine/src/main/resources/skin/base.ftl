@@ -78,6 +78,7 @@
 
   <div class="container content">
       <@block name="middle">
+         <#include "/docMacros.ftl">
          <section>
            <article role="contentinfo">
              <#if false && onArtifact?? && Root.canAddDocumentation()>
